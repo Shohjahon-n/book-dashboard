@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from '../firebase';
@@ -93,11 +93,11 @@ export default function Login({ setUser }) {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{' '}
-                  <a
-                    href="/register"
+                  <Link
+                    to="/register"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500">
                     Sign up
-                  </a>
+                  </Link>
                 </p>
               </form>
             </div>

@@ -23,14 +23,12 @@ const firebaseConfig = {
   appId: '1:991112835080:web:b7d0f6da79aefe47ea21bd',
   measurementId: 'G-6XCRD2VVXK',
 };
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const messaging = getMessaging(app);
 
-// Exported functions
 export {
   auth,
   db,
@@ -42,7 +40,6 @@ export {
   signInWithEmailAndPassword,
 };
 
-// Function to add a book
 export const addBook = async (formData, id) => {
   try {
     const { title, author, image, price } = formData;
@@ -64,14 +61,12 @@ export const addBook = async (formData, id) => {
   }
 };
 
-// Function to get book data
 export const getData = async () => {
   const booksCollection = collection(db, 'books');
   const querySnapshot = await getDocs(booksCollection);
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-// Function to delete a book
 export async function deleteBook(id) {
   try {
     const bookRef = doc(db, 'books', id);
@@ -82,7 +77,6 @@ export async function deleteBook(id) {
   }
 }
 
-// Function to check if a user is an admin
 export const checkIfAdmin = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId);
@@ -100,7 +94,6 @@ export const checkIfAdmin = async (userId) => {
   }
 };
 
-// Function to add an order
 export const addOrder = async (book, nickname) => {
   try {
     const orderData = {
@@ -119,7 +112,6 @@ export const addOrder = async (book, nickname) => {
   }
 };
 
-// Function to fetch orders
 export const fetchOrders = async () => {
   const ordersCollection = collection(db, 'orders');
   const orderSnapshot = await getDocs(ordersCollection);
