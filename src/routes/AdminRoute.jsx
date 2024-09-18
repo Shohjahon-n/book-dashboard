@@ -1,25 +1,30 @@
 import { useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { Outlet, Navigate } from 'react-router-dom';
 import { checkIfAdmin } from '../firebase';
 
 export default function AdminRoute() {
+  const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(null);
-  const uid = localStorage.getItem('uuid');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const verifyAdmin = async () => {
-      if (uid) {
-        const isAdmin = await checkIfAdmin(uid);
-        setIsAdmin(isAdmin);
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        const adminStatus = await checkIfAdmin(user.uid);
+        setIsAdmin(adminStatus);
       } else {
         setIsAdmin(false);
       }
-    };
+      setLoading(false);
+    });
 
-    verifyAdmin();
-  }, [uid]);
+    return () => unsubscribe();
+  }, []);
 
-  if (isAdmin === null) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 

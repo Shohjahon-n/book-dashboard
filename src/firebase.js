@@ -76,21 +76,21 @@ export async function deleteBook(id) {
     throw error;
   }
 }
-
 export const checkIfAdmin = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId);
     const docSnap = await getDoc(userRef);
 
     if (docSnap.exists()) {
-      return docSnap.data().isAdmin === true;
+      const userData = docSnap.data();
+      return userData.isAdmin === true;
     } else {
-      console.log('No such document!');
-      return false;
+      console.log(`No such document for userId: ${userId}`);
+      return false; // No document found, return false
     }
   } catch (error) {
     console.error('Error checking admin status:', error);
-    return false;
+    return false; // On error, assume not an admin
   }
 };
 

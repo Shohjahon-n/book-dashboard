@@ -1,10 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { createUserWithEmailAndPassword, auth } from '../firebase';
+import { createUserWithEmailAndPassword, auth, db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { getIdToken } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-export default function Regsiter() {
+import { doc, setDoc } from 'firebase/firestore';
+export default function Regsiter({ setUser }) {
   const navigate = useNavigate();
   const {
     register,
@@ -23,14 +24,32 @@ export default function Regsiter() {
     try {
       const userDec = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userDec.user;
+
+      console.log('Foydalanuvchi ID: ', user.uid);
+
       await updateProfile(user, {
         displayName: data.name,
       });
+
+      await setDoc(doc(db, 'users', user.uid), {
+        email: data.email,
+        name: data.name,
+        isAdmin: true,
+      })
+        .then(() => {
+          console.log('Document successfully written!');
+        })
+        .catch((error) => {
+          console.error('Error adding document: ', error);
+        });
+
       const token = await getIdToken(user);
-      localStorage.setItem('token', token);
+      localStorage.setItem('uuid', token);
+
       navigate('/products');
       console.log(user);
     } catch (error) {
+      console.error('Error during submission: ', error);
       if (error.code === 'auth/email-already-in-use') {
         console.log('Email already in use');
       }
